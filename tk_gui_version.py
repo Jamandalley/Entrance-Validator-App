@@ -4,6 +4,7 @@ import mysql.connector as sql
 import time
 import pwinput as pw
 import hashlib
+# import bcrypt
 
 class EntranceValidator:
     def __init__(self):
@@ -16,18 +17,22 @@ class EntranceValidator:
 
     def sign_up(self, matric_no, name, email, department, password):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        myquery = "INSERT INTO customer_profile (matric_number, name, email, department, password) VALUES (%s, %s, %s, %s, %s)"
-        val = (matric_no, name, email, department, hashed_password)
+        myquery = "INSERT INTO customer_profile (matric_number, full_name, email, department, password) VALUES (%s, %s, %s, %s, %s)"
+        val = (matric_no, name, email, department, hashed_password.decode())
         self.mycursor.execute(myquery, val)
         self.mycon.commit()
-
+        
+    def show_home_page(self):
+        self.update()  
+        self.deiconify()
+        
     def validate_login(self, matric_no, password):
         myquery = "SELECT * FROM customer_profile WHERE matric_number = %s"
         val = (matric_no, )
         self.mycursor.execute(myquery, val)
         user_details = self.mycursor.fetchone()
 
-        if user_details and pw.verify(password.encode(), user_details[4].encode()):
+        if user_details and hashlib.sha256(password.encode()).hexdigest() == user_details[4]:
             return True
         else:
             return False
@@ -144,6 +149,7 @@ class SignUpWindow(tk.Toplevel):
             self.entrance_validator.sign_up(matric_no, name, email, department, password)
             messagebox.showinfo("Sign Up Successful", "You have successfully signed up!")
             self.destroy()
+            self.master.show_home_page()
         else:
             messagebox.showerror("Error", "Please fill in all the fields")
 
