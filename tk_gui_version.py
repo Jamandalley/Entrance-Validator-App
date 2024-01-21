@@ -57,12 +57,12 @@ class EntranceValidatorApp(tk.Tk):
         self.entrance_validator.connect_to_database()
 
     def show_sign_in(self):
-        self.withdraw()  # Hide the main window
+        self.withdraw()  
         self.sign_in_window = SignInWindow(self, self.entrance_validator)
         self.sign_in_window.grab_set()
 
     def show_sign_up(self):
-        self.withdraw()  # Hide the main window
+        self.withdraw()  
         self.sign_up_window = SignUpWindow(self, self.entrance_validator)
         self.sign_up_window.grab_set()
 
@@ -102,7 +102,7 @@ class SignUpWindow(tk.Toplevel):
         super().__init__(master)
         self.title("Sign Up")
         self.geometry("300x250")
-        self.entrance_validator = entrance_validator
+        self.entrance_validator = entrance_validator 
 
         # Create widgets
         self.matric_label = tk.Label(self, text="Matric Number:")
