@@ -10,7 +10,7 @@ class EntranceValidator:
     def __init__(self):
         self.mycon = None
         self.mycursor = None
-
+        
     def connect_to_database(self):
         self.mycon = sql.connect(host='127.0.0.1', user='root', passwd='', database='sqi_db')
         self.mycursor = self.mycon.cursor()
@@ -18,7 +18,7 @@ class EntranceValidator:
     def sign_up(self, matric_no, name, email, department, password):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
         myquery = "INSERT INTO customer_profile (matric_number, full_name, email, department, password) VALUES (%s, %s, %s, %s, %s)"
-        val = (matric_no, name, email, department, hashed_password.decode())
+        val = (matric_no, name, email, department, hashed_password)
         self.mycursor.execute(myquery, val)
         self.mycon.commit()
         
@@ -28,9 +28,9 @@ class EntranceValidator:
         
     def validate_login(self, matric_no, password):
         myquery = "SELECT * FROM customer_profile WHERE matric_number = %s"
-        val = (matric_no, )
+        val = matric_no
         self.mycursor.execute(myquery, val)
-        user_details = self.mycursor.fetchone()
+        user_details = self.mycursor.fetchall()
 
         if user_details and hashlib.sha256(password.encode()).hexdigest() == user_details[4]:
             return True
@@ -99,6 +99,7 @@ class SignInWindow(tk.Toplevel):
         if self.entrance_validator.validate_login(matric_no, password):
             messagebox.showinfo("Login Successful", "Welcome to SQI College!")
             self.destroy()
+            self.master.show_home_page()
         else:
             messagebox.showerror("Login Failed", "Invalid Matric Number or Password")
 
